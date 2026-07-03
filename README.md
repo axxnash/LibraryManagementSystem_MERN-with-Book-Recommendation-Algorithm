@@ -92,15 +92,10 @@ docker-compose up
 
 ## Login Credentials
 
-Starter Login Credentials : (Make sure to import database collections i.e. userdetails json file into the collections)
+Default seeded credentials are not stored in the repository.
+Create or reset admin credentials locally after importing the database collections.
 
-1. ADMIN (user_type = "admin_user" ):
-
-```
- Email : admin@gmail.com , Password : admin
-```
-
-2. Normal User Can be created by SignUp Page (user_type = "normal_user" ):
+Normal users can still be created from the SignUp page.
 
 ## Lessons Learned
 

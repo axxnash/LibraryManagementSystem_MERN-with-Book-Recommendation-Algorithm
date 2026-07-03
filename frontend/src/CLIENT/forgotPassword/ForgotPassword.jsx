@@ -11,9 +11,9 @@ const ForgotPassword = () => {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  const [otpCode, setOtpCode] = useState('')
 
   const [isEmailPhoneValid, setIsEmailPhoneValid] = useState(false)
-  const [userId, setUserId] = useState(null)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -23,9 +23,8 @@ const ForgotPassword = () => {
         phone,
       })
 
-      toast.success(' Credentials validation Success')
+      toast.success(validateEmailPhone.data.message)
       setIsEmailPhoneValid(true)
-      setUserId(validateEmailPhone.data.userId)
 
       setEmail('')
       setPhone('')
@@ -47,14 +46,13 @@ const ForgotPassword = () => {
   const handlePasswordFormSubmit = async (e) => {
     e.preventDefault()
     if (password === confirmPassword) {
-      // Validate alphanumeric password with a must Special character
       const alphanumericRegex =
-        /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
 
       const isPasswordValid = alphanumericRegex.test(password)
       if (!isPasswordValid) {
         return toast(
-          'Password must be alphanumeric and contain at least one special character',
+          'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.',
           {
             icon: 'ℹ️',
           }
@@ -63,12 +61,13 @@ const ForgotPassword = () => {
 
       try {
         const response = await axios.patch(ForgotPassword_API, {
-          userId,
+          otpCode,
           newPassword: password,
         })
 
         toast.success(response.data.message)
 
+        setOtpCode('')
         setPassword('')
         setConfirmPassword('')
         setPasswordMatch(true)
@@ -133,10 +132,23 @@ const ForgotPassword = () => {
           <form onSubmit={handlePasswordFormSubmit}>
             <h1 className='h2 text-center my-3'>Update Password</h1>
             <div className='form-group'>
+              <label>OTP Code:</label>
+              <input
+                type='text'
+                minLength={4}
+                maxLength={4}
+                className='form-control'
+                value={otpCode}
+                onChange={(e) => setOtpCode(e.target.value)}
+                required
+                autoComplete='off'
+              />
+            </div>
+            <div className='form-group'>
               <label>New Password:</label>
               <input
                 type='password'
-                minLength={5}
+                minLength={8}
                 className='form-control'
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -147,7 +159,7 @@ const ForgotPassword = () => {
             <div className='form-group'>
               <label>Confirm Password:</label>
               <input
-                minLength={5}
+                minLength={8}
                 type='password'
                 className='form-control'
                 value={confirmPassword}
